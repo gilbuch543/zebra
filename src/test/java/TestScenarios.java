@@ -141,7 +141,7 @@ public class TestScenarios {
      */
     private static List<Scenario> parseFileIntoListOfScenarios(FileInputStream input) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Scenario> myList = new ArrayList();
+        List<Scenario> scenariosList = new ArrayList();
 
         JsonFactory jf = new JsonFactory();
         JsonParser jp = jf.createParser(input);
@@ -149,10 +149,10 @@ public class TestScenarios {
         jp.nextToken();
         while (jp.hasCurrentToken()) {
             Scenario scenario = jp.readValueAs(Scenario.class);
-            myList.add(scenario);
+            scenariosList.add(scenario);
             jp.nextToken();
         }
-        return myList;
+        return scenariosList;
     }
 
 

@@ -106,6 +106,7 @@ public class TestScenarios {
         return Array;
 
     }
+
     /**
      * <b>Method Steps:</b><br>
      * - Get List of scenarios<br>
@@ -122,6 +123,7 @@ public class TestScenarios {
         }
         return testScenarios;
     }
+
     /**
      * <b>Method Steps:</b><br>
      * - random the result options(successful login/login failed)<br>
@@ -133,6 +135,7 @@ public class TestScenarios {
         String result = randomResults[select];
         return result;
     }
+
     /**
      * <b>Method Steps:</b><br>
      * - Create list of Scenarios<br>

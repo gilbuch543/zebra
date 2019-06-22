@@ -139,7 +139,7 @@ public class TestScenarios {
     /**
      * <b>Method Steps:</b><br>
      * - Create list of Scenarios<br>
-     * - Prase the file into the list (each line is a scenario)<br>
+     * - Prase the file into the list (each line is a scenario in JSON)<br>
      * - Return the list <br>
      */
     private static List<Scenario> parseFileIntoListOfScenarios(FileInputStream input) throws IOException {

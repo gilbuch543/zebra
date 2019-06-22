@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -32,7 +33,16 @@ public class TestScenarios {
         // Write these lines to the file.
         // ... We call newLine to insert a newline character.
         ObjectMapper objectMapper = new ObjectMapper();
-
+        try (FileOutputStream fos = new FileOutputStream(file);
+             PrintStream printStream = new PrintStream(fos)) {
+            myList.forEach(scenario -> {
+                try {
+                    printStream.println(objectMapper.writeValueAsString(scenario));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
          //car = new Car();
       //  car.brand = "BMW";
       //  car.doors = 4;

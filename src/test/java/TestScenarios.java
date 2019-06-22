@@ -10,28 +10,36 @@ import java.util.*;
 
 public class TestScenarios {
 
+
+    static final String INPUT_PATH = "C:\\\\Users\\\\gil b\\\\Desktop\\\\project1\\\\input.txt";
+    static final String TEST_FAILURE_OUTPUT = "D:\\\\testFailureUsername.txt";
+    static final String TEST_RESULTS = "D:\\\\testResults.txt";
+    static final String RESULT_SUCCESS = "successful login";
+    static final String RESULT_FAILED = "login failed";
+    static final Random RANDOM = new Random();
+
     public static void main(String[] args) throws IOException {
 
-        List<Scenario> myList;
-        String[] Array;
-
-
-        FileInputStream input = new FileInputStream("C:\\\\Users\\\\gil b\\\\Desktop\\\\project1\\\\input.txt");
-        myList = parseFileIntoListOfScenarios(input);
-        myList = runTest(myList);
-        createTestResultsOutPutFile(myList);
-        Array = checkForFailuresToLogin(myList);
-        createFailureOutPutFile(Array);
-
-
+        List<Scenario> testScenarios;
+        List<Scenario> testResults;
+        String[] failureLogins;
+        FileInputStream input = new FileInputStream(INPUT_PATH);
+        testScenarios = parseFileIntoListOfScenarios(input);
+        testResults = runTestScenarios(testScenarios);
+        createTestResultsOutPutFile(testResults);
+        failureLogins = checkForFailuresToLogin(testResults);
+        createFailureOutPutFile(failureLogins);
     }
 
+    /**
+     * <b>Method Steps:</b><br>
+     * - Get list of Scenarios<br>
+     * - Create new file in specific path<br>
+     * - Write each scenario in the file<br>
+     * - print the files absolute path<br>
+     */
     private static void createTestResultsOutPutFile(List<Scenario> myList) throws IOException {
-        File file = new File("D:\\\\testResults.txt");
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-
-        // Write these lines to the file.
-        // ... We call newLine to insert a newline character.
+        File file = new File(TEST_RESULTS);
         ObjectMapper objectMapper = new ObjectMapper();
         try (FileOutputStream fos = new FileOutputStream(file);
              PrintStream printStream = new PrintStream(fos)) {
@@ -43,32 +51,22 @@ public class TestScenarios {
                 }
             });
         }
-         //car = new Car();
-      //  car.brand = "BMW";
-      //  car.doors = 4;
-
-     /*   objectMapper.writeValue(
-                new FileOutputStream("data/output-2.json"), car);
-        for (Scenario currentFailure:
-                myList) {
-            writer.write(currentFailure.toString());
-            writer.newLine();
-
-        }*/
-        writer.close();
         System.out.println("Absolute Path: " + file.getAbsolutePath());
     }
 
+    /**
+     * <b>Method Steps:</b><br>
+     * - Get Array of unique failed usernames<br>
+     * - Create new file in specific path<br>
+     * - Write each username in the file <br>
+     * - print the files absolute path<br>
+     */
     private static void createFailureOutPutFile(String[] failureList) throws IOException {
-        //PrintWriter writer = new PrintWriter("testFailureUsername.txt", "UTF-8");
 
-        File file = new File("D:\\\\testFailureUsername.txt");
+        File file = new File(TEST_FAILURE_OUTPUT);
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
-        // Write these lines to the file.
-        // ... We call newLine to insert a newline character.
-
-        for (String currentFailure:
+        for (String currentFailure :
                 failureList) {
             writer.write(currentFailure);
             writer.newLine();
@@ -77,45 +75,70 @@ public class TestScenarios {
         System.out.println("Absolute Path: " + file.getAbsolutePath());
     }
 
-    private static String[] checkForFailuresToLogin(List<Scenario> myList) {
-       ArrayList<String> failedScenarios =  new ArrayList<>();
-        int j = 0;
-        for (int i = 0; i < myList.size(); i++) {
-            Scenario scenario = myList.get(i);
-            if (scenario.expected_result.contentEquals("successful login") && scenario.actual_result.contentEquals("login failed") ||
-                    scenario.expected_result.contentEquals("login failed") && scenario.actual_result.contentEquals("successful login")) {
+    /**
+     * <b>Method Steps:</b><br>
+     * - Get List of scenarios<br>
+     * - Check if the expected result and actual results are alike<br>
+     * - add the failed username to failedScenarios list<br>
+     * - Convert the list to set (to remove duplicated usernames)<br>
+     * - Convert the set to Array of failed usernames<br>
+     */
+    private static String[] checkForFailuresToLogin(List<Scenario> testResults) {
+        ArrayList<String> failedScenarios = new ArrayList<>();
+        int index = 0;
 
-                failedScenarios.add(j, scenario.scenario_data.getUsername());
-                j++;
+        for (Scenario currentScenario :
+                testResults) {
+            if (currentScenario.expected_result.contentEquals("successful login") && currentScenario.actual_result.contentEquals("login failed") ||
+                    currentScenario.expected_result.contentEquals("login failed") && currentScenario.actual_result.contentEquals("successful login")) {
+
+                failedScenarios.add(index, currentScenario.scenario_data.getUsername());
+                index++;
             }
+
         }
+
         Set set = new HashSet();
-        set.addAll(failedScenarios);
+        set.addAll(failedScenarios);//remove duplicates
         String[] Array = new String[set.size()];
-       // set.remove(null);
         set.toArray(Array);
 
         return Array;
 
     }
+    /**
+     * <b>Method Steps:</b><br>
+     * - Get List of scenarios<br>
+     * - Execute login on each scenario<br>
+     * - Set the actual result with the execute login result (successful login/login failed)<br>
+     * - return the list with the results<br>
+     */
+    private static List<Scenario> runTestScenarios(List<Scenario> testScenarios) {
 
-    private static List<Scenario> runTest(List<Scenario> testResults) {
-        for (int i = 0; i < testResults.size(); i++) {
-            Scenario scenario = testResults.get(i);
-            String currentResult = randomResults();
-            scenario.setActual_result(currentResult);
+        for (Scenario currentScenario :
+                testScenarios) {
+            String currentResult = executeLogin();
+            currentScenario.setActual_result(currentResult);
         }
-        return testResults;
+        return testScenarios;
     }
-
-    private static String randomResults() {
-        String[] randomResults = {"successful login", "login failed"};
-        Random random = new Random();
-        int select = random.nextInt(randomResults.length);
+    /**
+     * <b>Method Steps:</b><br>
+     * - random the result options(successful login/login failed)<br>
+     * - return the randomized result<br>
+     */
+    private static String executeLogin() {
+        String[] randomResults = {RESULT_SUCCESS, RESULT_FAILED};
+        int select = RANDOM.nextInt(randomResults.length);
         String result = randomResults[select];
         return result;
     }
-
+    /**
+     * <b>Method Steps:</b><br>
+     * - Create list of Scenarios<br>
+     * - Prase the file into the list (each line is a scenario)<br>
+     * - Return the list <br>
+     */
     private static List<Scenario> parseFileIntoListOfScenarios(FileInputStream input) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Scenario> myList = new ArrayList();

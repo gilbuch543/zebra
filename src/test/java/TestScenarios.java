@@ -142,6 +142,7 @@ public class TestScenarios {
      * - Prase the file into the list (each line is a scenario)<br>
      * - Return the list <br>
      */
+
     private static List<Scenario> parseFileIntoListOfScenarios(FileInputStream input) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Scenario> scenariosList = new ArrayList();

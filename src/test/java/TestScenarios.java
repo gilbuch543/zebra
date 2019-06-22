@@ -9,6 +9,7 @@ import java.util.*;
 
 public class TestScenarios {
 
+
     public static void main(String[] args) throws IOException {
 
         List<Scenario> myList;

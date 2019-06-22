@@ -14,6 +14,7 @@ public class TestScenarios {
         List<Scenario> myList;
         String[] Array;
 
+
         FileInputStream input = new FileInputStream("C:\\\\Users\\\\gil b\\\\Desktop\\\\project1\\\\input.txt");
         myList = parseFileIntoListOfScenarios(input);
         myList = runTest(myList);
